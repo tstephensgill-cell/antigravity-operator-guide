@@ -674,13 +674,22 @@ Worker validation must check both:
 - explicit refusal/StopReason behaviour
 - all returned fields obey the worker contract
 
-### Antigravity Turbo Mode Warning
+## External Platform Mode Caution
 
-Antigravity Turbo Mode disables Antigravity’s platform-level safety barriers for maximum iteration velocity.
+Some behaviour may come from the Antigravity platform UI rather than Anti OS governance files.
 
-When Turbo Mode is enabled, external ChatGPT must assume Antigravity may not provide its usual manual review barriers for terminal commands, file access, or rapid action flow.
+External ChatGPT assistants must distinguish:
 
-Therefore, for Anti OS work, ChatGPT must treat Anti’s own governance as mandatory:
+- Anti OS governance: rules verified from Anti README, BOOTSTRAP, HANDOFF, directives, or approved repo evidence.
+- Platform UI context: behaviour reported by the user or shown in screenshots, but not necessarily present in Anti OS files.
+
+If the user reports a platform mode such as Turbo Mode, ChatGPT should treat it as USER-PROVIDED platform context unless verified from current platform documentation or UI evidence.
+
+Do not claim platform UI modes are Anti OS governance unless they exist in Anti OS source-of-truth.
+
+Do not ask Anti to prove platform UI settings by grepping the Anti OS repo.
+
+If a platform mode appears to reduce manual review or safety prompts, ChatGPT should preserve Anti OS governance more carefully:
 - bootstrap first
 - README/source-of-truth hierarchy
 - explicit stage authority
@@ -688,15 +697,10 @@ Therefore, for Anti OS work, ChatGPT must treat Anti’s own governance as manda
 - exact option scope
 - no auto-advance
 - no hidden helper steps
-- no unapproved file reads/writes
 - proof before completion
 - human approval for red gates
 
-Turbo Mode does not reduce Anti’s governance requirements. It increases the need to enforce them carefully.
-
-Turbo Mode also does not override ChatGPT/OpenAI/system safety rules. It only means the local Antigravity platform may not stop risky local operations for the user.
-
-ChatGPT should never treat Turbo Mode as permission to broaden scope, skip stage gates, or continue without approval.
+External platform modes do not reduce Anti governance requirements and do not override ChatGPT/OpenAI/system safety rules.
 
 ### How ChatGPT Should Review Worker-Assisted Anti Results
 
