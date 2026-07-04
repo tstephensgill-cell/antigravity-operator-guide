@@ -28,11 +28,18 @@ Please review the following proposed Anti OS app-work prompt against these safet
 13. Is there any secret/env/data/destructive-operation risk involved?
 14. Does a red-gate scan reveal hidden red-gate actions?
 15. Are there any banned vague execution phrases, such as "if simple", "if needed", "where useful", "optional", or "as appropriate"?
-16. Does the prompt use invalid approval menu tokens like "EXECUTE ONLY" instead of "EXECUTE/VERIFY ONLY"?
-17. Does the prompt allow execution to discover scope while editing?
-18. Should this work be split into smaller Work Packages?
-19. Is this safe to commit?
-20. Is this safe to push?
+16. If the prompt/menu uses `EXECUTE ONLY`, is it an exact bounded Anti approval option with clear stage, target, action, allowed files, forbidden actions, stop conditions, and proof requirements?
+17. If execution and verification are intended as one bundle, is `EXECUTE/VERIFY` fully itemized?
+18. Is ChatGPT preserving Anti’s actual stage/menu governance instead of inventing stricter or different stage rules?
+19. Does the prompt preserve the numbered approval menu workflow?
+20. Does a number reply approve only the exact immediately preceding menu option?
+21. Are broad architecture plans appropriately separated from execution approval?
+22. Does the prompt avoid treating roadmap suggestions as execution approval?
+23. Does the prompt allow execution to discover scope while editing?
+24. Should this work be split into smaller Work Packages?
+25. Are helper steps (tests, reads, checkpoints, commits) explicitly itemized if required?
+26. Is this safe to commit?
+27. Is this safe to push?
 
 Return your review in this exact format:
 - Verdict: [PASS | PASS WITH WARNING | FAIL / STOP | NEEDS PLAN | NEEDS PROOF | UNSAFE TO COMMIT | UNSAFE TO PUSH]

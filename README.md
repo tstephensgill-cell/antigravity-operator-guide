@@ -97,7 +97,92 @@ PUSH/VERIFY ONLY:
 - no new commits
 - no force push unless explicitly red-gate approved
 - verify remote result and status
-Important: "EXECUTE ONLY" is not valid. Use "EXECUTE/VERIFY ONLY".
+Anti supports base stages and explicit bundled stages. EXECUTE ONLY may be valid when it appears as an exact, bounded, approved menu option. EXECUTE/VERIFY is a valid bundled stage when execution and verification are approved together. ChatGPT must preserve the exact stage/bundle used by Anti’s approval menu and evaluate whether the option is exact, bounded, and properly itemized.
+
+## ChatGPT Guidance: Bootstrap And Source Of Truth
+
+This guide is for external ChatGPT assistants helping the user operate Anti. It is not Anti’s runtime governance and does not replace Anti’s README or boot process.
+
+Anti must complete global bootstrap before task work. If Anti reports `BOOTSTRAP_BLOCKED`, ChatGPT should not suggest falling back to a local project README or continuing with task work. The correct guidance is to resolve bootstrap/read permission first.
+
+Source-of-truth order:
+1. Global Anti README / bootstrap-loaded governance.
+2. Boot/agent directive, only where it does not conflict with README.
+3. Project-local rules, loaded only after global governance.
+4. External operator guide, advisory only for ChatGPT prompt drafting/review.
+
+If a boot/agent directive conflicts with README.md, README.md wins.
+
+ChatGPT must not claim bootstrap is loaded unless Anti has provided bootstrap proof in the current session.
+
+## ChatGPT Guidance: Preserve Anti Stage/Menu Governance
+
+This guide is for external ChatGPT assistants helping the user operate Anti. It must not invent a different governance model.
+
+Anti supports base stages:
+- CAPABILITY
+- PLAN
+- VERIFY
+- EXECUTE
+- COMMIT
+- PUSH
+- ESCALATION
+
+Anti may also use explicitly approved bundled stages:
+- EXECUTE/VERIFY
+- COMMIT/VERIFY
+- PUSH/VERIFY
+- VERIFY BATCH
+
+ChatGPT must not tell the user that `EXECUTE ONLY` is invalid by default. `EXECUTE ONLY` can be valid when it appears as an exact, bounded approval-menu option with a clear stage, target, action, allowed scope, forbidden scope, and stop condition.
+
+`EXECUTE/VERIFY` is appropriate when execution and verification are approved as one itemized bundle, but it is not the only valid execution form.
+
+Numbered approval menus are part of Anti’s operator workflow.
+
+A number reply such as `1`, `2`, or `3` is valid only when:
+- a numbered Approval Menu appeared in the immediately preceding assistant message
+- the number maps to exactly one option
+- the selected option contains the full stage/target/action text
+- the user adds no extra conditions, questions, or ambiguity
+
+The selected number authorizes only the exact option text. It does not authorize helper steps, discovery, tests, commits, pushes, cleanup, roadmap work, or follow-up work unless those actions are explicitly listed inside that exact option.
+
+If the user replies with conditions or feedback, such as `Approve 1 but...`, `Change 1 so that...`, or `I like option 1 but...`, ChatGPT should treat it as PLAN feedback, not approval.
+
+Menu options expire after one user turn.
+
+ChatGPT should preserve Anti’s numbered approval-menu workflow, while still checking that each option is bounded, stage-correct, risk-aware, and not converting architecture or roadmap work into execution.
+
+## ChatGPT Guidance: Hidden Helper Step And Checkpoint Caution
+
+Some boot, skill, or local directives may mention helper actions such as checkpoints, Omega hooks, Gatekeeper audits, file reads, test runs, backups, git commits, or git stashes.
+
+ChatGPT must not treat these helper actions as automatically approved.
+
+Under Anti’s exact option scope governance, helper steps are only allowed when they are explicitly included in the selected approval option.
+
+Examples of helper steps that must be itemized before use:
+- file reads
+- directory listings
+- grep/search commands
+- tests
+- server starts
+- browser smoke checks
+- Omega hooks
+- Gatekeeper audits
+- checkpoint commits
+- git stash
+- backup file creation
+- cleanup
+- rollback
+- staging
+- commit
+- push
+
+If a helper step is required for safety but was not listed in the selected option, ChatGPT should recommend returning to PLAN and drafting a corrected numbered approval menu that explicitly includes that helper step.
+
+If a boot or local directive appears to require an unapproved commit, stash, backup, or checkpoint, ChatGPT should treat it as a governance conflict and follow the README/source-of-truth rule.
 
 ## Next Action Menu Contract
 
