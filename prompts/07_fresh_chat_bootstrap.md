@@ -20,7 +20,7 @@ Anti supports base stages such as CAPABILITY, PLAN, VERIFY, EXECUTE, COMMIT, PUS
 6. Start With PLAN ONLY: All app work starts with PLAN ONLY to discover exact files, risks, stop conditions, and proof requirements. If context is incomplete, draft PLAN ONLY.
 7. Execution Surface Lock: Execution may only touch files discovered and approved by PLAN. Execution must NOT discover its own scope while editing. Stop if scope expands.
 8. Do Not Bundle Risk Domains: Separate DB schema, backend routes, backend storage helpers, frontend nav, frontend UI, parser work, external APIs, auth/session, and financial flows into sequential Work Packages.
-9. Frontend Runtime Risk: client/src/main.js and global navigation hold app-wide runtime risk. node -c is syntax only. node -c does not prove runtime safety. Browser smoke proof is REQUIRED for frontend app-shell work. If browser smoke proof cannot run, mark unsafe to push.
+9. Frontend Runtime Risk: client/src/main.js and global navigation hold app-wide runtime risk. node -c is syntax only. node -c does not prove runtime safety. Anti-run localhost smoke proof is REQUIRED for frontend app-shell work where Anti has local runtime access. External ChatGPT must not assume the human user manually tests. Anti should gather proof directly. Data-mutating smoke requires user approval unless dev-intercepted. Push without smoke is allowed only with explicit user-accepted no-smoke risk.
 10. Banned Language: Vague execution language is banned:
 - if simple
 - if needed

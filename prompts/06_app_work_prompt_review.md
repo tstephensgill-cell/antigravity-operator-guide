@@ -24,7 +24,7 @@ Please review the following proposed Anti OS app-work prompt against these safet
 - AutoContinueAllowed
 10. Does this work bundle multiple risk domains, such as DB + backend + frontend?
 11. Is frontend runtime/app-shell risk involved, such as client/src/main.js, navigation, global startup, auth, global fetch, shared loaders, or route/view registry?
-12. Is browser smoke proof explicitly required?
+12. Is Anti-run localhost smoke proof explicitly required? (Note: no-smoke push requires accepted risk; data-mutating smoke requires approval)
 13. Is there any secret/env/data/destructive-operation risk involved?
 14. Does a red-gate scan reveal hidden red-gate actions?
 15. Are there any banned vague execution phrases, such as "if simple", "if needed", "where useful", "optional", or "as appropriate"?

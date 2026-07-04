@@ -19,7 +19,7 @@ Limits:
 - Gate Map is NOT a roadmap.
 - Real Gate Map fields must include: GateCategory, AllowedFiles, ForbiddenFiles, ForbiddenActions, StopConditions, VerificationCommands, RedGateRequired, HumanApprovalRequired, AutoContinueAllowed.
 - Ensure risk domains are NOT bundled into a single Work Package unless explicitly approved as an emergency batch.
-- Determine if frontend runtime/browser smoke proof is required.
+- Determine if frontend runtime/Anti-run localhost smoke proof is required. Human manual smoke is only needed if the user explicitly chooses to test personally.
 - Identify exact file touch points to establish Execution Surface Lock.
 - If exact file touch points, insertion points, stop conditions, and proof requirements are missing, remain in PLAN ONLY.
 

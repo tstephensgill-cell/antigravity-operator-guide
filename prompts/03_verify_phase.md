@@ -18,7 +18,7 @@ Limits:
 - Confirm no unapproved tracked files changed.
 - Confirm no unapproved untracked files were created inside the repo.
 - Confirm any known Antigravity artifact side-effects, such as implementation_plan.md, are only artifacts if they do not appear in repo proof.
-- For frontend app-shell/runtime work, node -c is not enough; browser/manual smoke proof is required before marking safe to push.
+- For frontend app-shell/runtime work, node -c is not enough; Anti-run localhost smoke proof is required before marking safe to push where Anti has local runtime access (human manual smoke only if explicitly chosen). Data-mutating smoke requires explicit approval unless dev/intercept-safe. Push without smoke requires explicit accepted no-smoke risk.
 
 Produce the exact raw returned payloads / git status output / test logs for the prior execution step.
 No summaries, ellipses, or paraphrases.

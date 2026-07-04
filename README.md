@@ -52,7 +52,7 @@ Valid proof includes:
 - syntax check output
 - exact route search output
 - exact function search output
-- browser/manual smoke proof where runtime UI is involved
+- Anti-run localhost smoke proof where runtime UI is involved (human manual smoke only if explicitly chosen)
 - raw worker payloads when relevant
 Invalid proof:
 - "I checked it"
@@ -375,8 +375,19 @@ can break unrelated pages:
 - Bank
 - Accountant
 - Notes
-node -c proves syntax only. node -c does not prove browser runtime works. Static checks are not enough for live UI behavior. Frontend app-shell work requires browser/manual smoke proof before push.
-Browser smoke proof checklist should include:
+node -c proves syntax only. node -c does not prove browser runtime works. Static checks are not enough for live UI behavior. Frontend app-shell work requires Anti-run localhost smoke proof before push where Anti has local runtime access.
+
+External ChatGPT must not assume the human user personally runs smoke tests.
+- Default wording should be "Anti-run localhost smoke proof".
+- Anti may run the app locally using existing project scripts.
+- Anti may use browser/devtools/runtime automation if available.
+- Anti should gather smoke proof directly when possible.
+- If localhost points at production data, read-only smoke is allowed but data-mutating smoke requires explicit user approval.
+- POST/PUT/PATCH/DELETE actions are data-mutating unless proven intercepted/dev-safe.
+- If safe interception/dev DB is unavailable, Anti should report NEEDS USER APPROVAL FOR DATA-MUTATING SMOKE.
+- Push without smoke is allowed only with explicit user-accepted no-smoke risk.
+
+Anti-run localhost smoke proof checklist should include:
 - app loads
 - login/session works if relevant
 - nav works
@@ -389,7 +400,8 @@ Browser smoke proof checklist should include:
 - no console-blocking runtime error
 - new feature page opens
 - existing critical flows still work
-If browser smoke proof cannot be run, mark "not safe to push" unless user explicitly accepts risk.
+
+If Anti-run localhost smoke proof cannot be run, mark "not safe to push" unless user explicitly accepts no-smoke risk.
 
 ## Banned Vague Execution Language
 Ban these phrases in EXECUTE/VERIFY prompts:
