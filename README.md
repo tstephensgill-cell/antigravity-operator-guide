@@ -448,6 +448,275 @@ External ChatGPT must understand:
 - raw worker outputs should be shown when used
 - absence of worker outputs in a supposed worker-assisted plan is a warning
 
+## Specialist / Subagent Operations Guide For ChatGPT
+
+This section teaches external ChatGPT assistants how to reason about Anti’s native worker/subagent system when reviewing Anti output or drafting prompts.
+
+This is advisory guidance for ChatGPT. It does not grant worker authority, does not change Anti runtime behaviour, and does not replace Anti’s README/bootstrap governance.
+
+### Native Subagent Mechanics
+
+Anti may use native subagent tools to create hidden background worker conversations.
+
+Important concepts:
+- `define_subagent` defines an in-session worker from a prompt/specification.
+- `invoke_subagent` invokes that worker for a bounded packet of work.
+- `send_message` may continue or communicate with a specific subagent conversation when explicitly approved.
+- Subagents are hidden/background worker chats with unique conversation IDs.
+- Subagent definitions are session-bound. Local markdown worker files remain the source of truth.
+- If the session ends or the worker is not currently defined, Anti must reload/redefine from the approved local worker source before invocation.
+- A worker definition is not a permanent promotion, not a registry change, and not default routing authority.
+- A worker invocation is not proof by itself. Raw worker payloads and verifier evidence are still required.
+
+External ChatGPT should check whether worker-assisted plans show:
+- exact worker names
+- exact worker packets
+- exact raw worker outputs
+- exact tool flags
+- allowed files/context
+- forbidden actions
+- stop conditions
+- whether any worker attempted scope expansion
+
+### Subagent Tool Flags
+
+When drafting or reviewing subagent prompts, ChatGPT should check the explicit tool flags.
+
+Important flags:
+- `enable_write_tools`
+- `enable_subagent_tools`
+- `enable_mcp_tools`
+
+Safe pure-logic worker pattern:
+- `enable_write_tools=false`
+- `enable_subagent_tools=false`
+- `enable_mcp_tools=false`
+
+Meaning:
+- no file writes
+- no worker spawning
+- no MCP/tool expansion
+- advisory output only
+
+Warning signs:
+- write tools enabled without an EXECUTE-approved target
+- subagent tools enabled for a worker that should be atomic
+- MCP tools enabled without explicit red-gate approval
+- a worker attempts file reads/writes not listed in its packet
+- a worker attempts to route, approve, commit, push, deploy, or mark completion
+
+Tool flags must be treated as operational bounds, not cosmetic settings.
+
+### Workspace Mode: inherit vs branch
+
+Some subagent systems support workspace modes such as:
+- `inherit`
+- `branch`
+
+ChatGPT must not assume either mode is safe by default.
+
+General guidance:
+- `inherit` means the worker operates in the parent/current workspace context. This is usually appropriate for pure-logic advisory work when write tools are disabled and the worker only receives bounded context.
+- `branch` may isolate work in a separate branch/workspace. This may be useful for experimental implementation, but it increases complexity and must be explicitly approved if it changes git/workspace state.
+
+Rules:
+- Pure-logic advisory workers should normally use inherited context with write/subagent/MCP tools disabled.
+- Write-enabled subagents require explicit EXECUTE approval, exact allowed files, exact branch/workspace expectations, and verification.
+- Branch/workspace creation, switching, or mutation is not implied by worker use.
+- If workspace mode is missing from a risky worker plan, ChatGPT should ask Anti to clarify before execution.
+
+### Bootstrap Delegation For Pure-Logic Workers
+
+Anti’s Rule 0A bootstrap mandate applies to the main Anti session. Pure-logic workers can run into a conflict if they are tool-disabled but also try to independently read BOOTSTRAP.md.
+
+Known operating pattern:
+- The Dispatcher / primary Anti session completes bootstrap.
+- The Dispatcher passes bounded governance/context into the worker packet.
+- The worker packet may include a marker such as `BOOTSTRAP_DELEGATED_BY_DISPATCHER`.
+- The worker then performs only its bounded pure-logic task.
+- The worker does not independently read BOOTSTRAP.md unless that read is explicitly part of the approved task.
+
+Expected phrase:
+`BOOTSTRAP_DELEGATED_BY_DISPATCHER`
+
+ChatGPT should recommend this pattern for pure-logic workers with write/tools disabled.
+
+Warning signs:
+- a pure-logic worker blocks because it tries to read BOOTSTRAP.md itself
+- a worker leaks `BOOTSTRAP_LOADED` text into a strict JSON response
+- a worker treats delegated bootstrap as execution authority
+- a worker uses delegated bootstrap to expand scope
+
+Important boundary:
+Write-enabled workers must NOT inherit this exemption casually.
+If a worker has write tools enabled, file-read/tool authority must be explicitly approved by the selected Anti stage/menu option.
+
+### JSON-Only Worker Output And BOOTSTRAP Leakage
+
+Some strict JSON workers may leak wrapper text such as:
+- `BOOTSTRAP_LOADED`
+- markdown fences
+- explanatory prose before/after JSON
+- partial bootstrap/status messages outside the schema
+
+For strict schema workers, ChatGPT should recommend prompts that require:
+- output starts with `{`
+- output ends with `}`
+- no markdown fences
+- no bootstrap wrapper text
+- no prose outside the JSON object
+- missing-context refusal follows the worker’s exact schema
+
+A worker returning useful content with wrapper leakage may be a partial success, but it is not a strict schema pass.
+
+Classify as:
+- `PASS` only if the output obeys the schema and the content is valid
+- `PASS WITH WARNING` if content is useful but formatting/schema has minor leakage
+- `NEEDS_REFINEMENT` if the worker still violates its contract
+- `FAIL / STOP` if the worker invents context, expands authority, or returns unsafe instructions
+
+### Transcript Audit Path
+
+Native subagents can produce transcript evidence that is stronger than a summary.
+
+ChatGPT should ask Anti to use transcript proof when validating worker/tool behaviour, especially after subagent tests or swarm work.
+
+Transcript verification should look for:
+- the worker conversation ID
+- the worker definition/spec used
+- the invocation packet
+- tool flags used at definition/invocation time
+- `ExecutedTools` or equivalent tool-use records
+- whether the worker used forbidden tools
+- whether the worker attempted file reads/writes
+- whether the worker spawned other subagents
+- whether the worker called MCP/external tools
+- whether the worker output matched the requested schema
+- whether wrapper text leaked into strict JSON output
+
+Important:
+Do not invent transcript paths.
+
+The exact transcript location may depend on Antigravity version, workspace, or project settings. If the transcript path is not already verified in the current session, ChatGPT should ask Anti to verify it using approved discovery before relying on it.
+
+A safe transcript-audit prompt should ask Anti to:
+- identify the current transcript/log location from verified local evidence
+- extract only the relevant worker conversation(s)
+- report conversation ID(s)
+- report `ExecutedTools` or equivalent tool-use evidence
+- avoid printing secrets or unrelated conversation content
+- stop if transcript location is unknown or inaccessible
+
+A transcript summary without tool-use evidence is not enough to prove tool isolation.
+
+### Swarm Throttle Policy
+
+Large worker batches can hit model/runtime rate limits.
+
+Known operating lesson:
+- high concurrency can cause 429/rate-limit failures
+- a concurrency level around 4 has been safer than large swarms
+- very large batches, such as 20+ simultaneous/near-simultaneous worker calls, should be treated as high risk unless explicitly approved
+- retries can burn quota and hide failure patterns
+
+ChatGPT should not encourage large autonomous swarms unless the user explicitly approves:
+- worker count
+- concurrency
+- retry policy
+- stop conditions
+- evidence retention
+- failure handling
+- quota/rate-limit behaviour
+
+Safer default:
+- small bounded batches
+- preserve raw worker outputs
+- stop on 429/rate limit
+- reduce concurrency before retrying
+- do not retry blindly
+- do not count a skipped/failed worker as passed
+
+### Invocation Caps And No-Retry Rule
+
+For quota-aware Anti work, worker invocation counts should be planned.
+
+Prompt-review checklist:
+- How many workers will be defined?
+- How many workers will be invoked?
+- Is each worker invocation necessary?
+- Is concurrency specified?
+- Is there a no-retry or limited-retry rule?
+- Does the prompt stop on rate-limit/429?
+- Are failed worker outputs preserved?
+- Are partial outputs labelled correctly?
+
+Default guidance:
+If rate limits, 429s, missing outputs, or malformed worker payloads occur, stop and return a TASK RESULT. Do not blindly retry or expand the swarm.
+
+### Known Partial-Pass Worker Pattern
+
+A worker can improve but still not fully pass.
+
+Example pattern:
+- a worker detects a boundary issue and returns a `StopReason`
+- but still fills a field with invalid content
+- or still stuffs multiple files into a single-file field
+- or still returns data that violates its own worker contract
+
+This is not a full pass.
+
+Classify as:
+- `PASS WITH WARNING` when output is usable but contract weakness remains
+- `NEEDS_REFINEMENT` when the worker behaviour must be patched before relying on it
+- `FAIL / STOP` when the output could cause unsafe routing, execution, or false completion
+
+Worker validation must check both:
+- explicit refusal/StopReason behaviour
+- all returned fields obey the worker contract
+
+### Antigravity Turbo Mode Warning
+
+Antigravity Turbo Mode disables Antigravity’s platform-level safety barriers for maximum iteration velocity.
+
+When Turbo Mode is enabled, external ChatGPT must assume Antigravity may not provide its usual manual review barriers for terminal commands, file access, or rapid action flow.
+
+Therefore, for Anti OS work, ChatGPT must treat Anti’s own governance as mandatory:
+- bootstrap first
+- README/source-of-truth hierarchy
+- explicit stage authority
+- numbered approval menus
+- exact option scope
+- no auto-advance
+- no hidden helper steps
+- no unapproved file reads/writes
+- proof before completion
+- human approval for red gates
+
+Turbo Mode does not reduce Anti’s governance requirements. It increases the need to enforce them carefully.
+
+Turbo Mode also does not override ChatGPT/OpenAI/system safety rules. It only means the local Antigravity platform may not stop risky local operations for the user.
+
+ChatGPT should never treat Turbo Mode as permission to broaden scope, skip stage gates, or continue without approval.
+
+### How ChatGPT Should Review Worker-Assisted Anti Results
+
+When Anti claims worker-assisted planning or verification, ChatGPT should check:
+
+- Were workers actually invoked?
+- Were raw worker outputs shown?
+- Were tool flags shown or inferable from verifier proof?
+- Did workers stay advisory?
+- Did workers avoid routing/approval/completion authority?
+- Did any worker attempt to read files, write files, spawn subagents, or call MCP?
+- Did strict JSON workers return valid naked JSON?
+- Did any worker leak bootstrap wrapper text?
+- Did transcript evidence confirm tool isolation?
+- Did rate limits or 429s occur?
+- Were partial passes labelled correctly?
+- Did the final Anti plan still require human approval?
+
+Absence of raw worker outputs in a supposed worker-assisted plan is a warning.
+
 ## Known Antigravity Artifact Side-Effects
 Antigravity may show messages such as:
 - Edited implementation_plan.md
