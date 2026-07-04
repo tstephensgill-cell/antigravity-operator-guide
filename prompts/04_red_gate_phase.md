@@ -15,6 +15,11 @@ Limits:
 - Do NOT execute the action.
 - Do NOT approve the action.
 - Output the drafted JSON packet for human review.
+- The draft packet must include real Gate Map fields: GateCategory, AllowedFiles, ForbiddenFiles, ForbiddenActions, StopConditions, VerificationCommands, RedGateRequired, HumanApprovalRequired, AutoContinueAllowed.
+- The draft packet must define the Execution Surface Lock.
+- The draft packet must identify whether the work touches any risk domains that must be split.
+- The draft packet must identify frontend runtime/browser smoke proof requirements where relevant.
+- The draft packet must not imply that architecture plans, roadmap items, or product ideas are execution approval.
 
 Stop after outputting the draft packet.
 ```

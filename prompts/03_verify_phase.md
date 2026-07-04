@@ -12,6 +12,14 @@ Do not edit files.
 Do not commit.
 Do not push.
 
+Limits:
+- Proof Contract: claims are not proof. Present raw verifier evidence.
+- Verify against the Execution Surface Lock.
+- Confirm no unapproved tracked files changed.
+- Confirm no unapproved untracked files were created inside the repo.
+- Confirm any known Antigravity artifact side-effects, such as implementation_plan.md, are only artifacts if they do not appear in repo proof.
+- For frontend app-shell/runtime work, node -c is not enough; browser/manual smoke proof is required before marking safe to push.
+
 Produce the exact raw returned payloads / git status output / test logs for the prior execution step.
 No summaries, ellipses, or paraphrases.
 

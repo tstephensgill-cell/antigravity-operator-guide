@@ -30,4 +30,9 @@ Limits:
 - NO further edits.
 - NO extra commits.
 - Stop after TASK RESULT.
+- Ensure browser smoke proof has been completed successfully before push for any frontend runtime/app-shell work.
+- Verify the Execution Surface Lock remained intact before finalizing commit or push readiness.
+- Do not push if verification is only syntax/static proof and the change touched client/src/main.js, navigation, global app startup, auth, global fetch, shared loaders, or route/view registry.
+- Do not push if unapproved files changed.
+- Do not push if the TASK RESULT relies on claims without raw proof.
 ```
